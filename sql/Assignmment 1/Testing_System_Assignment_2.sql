@@ -1,0 +1,99 @@
+DROP DATABASE IF EXISTS 	TestingMannagement;
+-- create database
+CREATE DATABASE		    	TestingMannagement;
+USE 						TestingMannagement;
+
+-- create table:Department
+CREATE TABLE	Department (
+	DepartmentID	TINYINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+	DepartmentName	VARCHAR(20) NOT NULL UNIQUE KEY
+);
+
+-- create table:Position
+CREATE TABLE	`Position`(
+	PositionID		TINYINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+	PositionName	VARCHAR(40)  NOT NULL UNIQUE KEY
+);
+-- create table:Account
+CREATE TABLE 	`Account`(
+	AccountID		TINYINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+	Email			VARCHAR(100) UNIQUE KEY ,
+	Username		VARCHAR(50) UNIQUE KEY NOT NULL,
+	FullName		VARCHAR(50) NOT NULL,
+	DepartmentID	TINYINT UNSIGNED NOT NULL,
+	PositionID		TINYINT UNSIGNED NOT NULL,
+	CreateDate		DATETIME DEFAULT NOW(),
+    FOREIGN KEY (DepartmentID) REFERENCES Department(DepartmentID),
+    FOREIGN KEY (PositionID) REFERENCES `Position`(PositionID)
+);
+-- create table:Group
+CREATE TABLE	`Group`(
+	GroupID		TINYINT	UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+	GroupName	VARCHAR(50) UNIQUE KEY NOT NULL,
+	CreatorID	TINYINT	UNSIGNED UNIQUE KEY NOT NULL,
+	CreateDate	DATETIME DEFAULT NOW() ,
+    FOREIGN KEY (CreatorID) REFERENCES `Account`(AccountID)
+);
+-- create table:GroupAccount
+CREATE TABLE	`GroupAccount`(
+	GroupID		TINYINT	UNSIGNED NOT NULL UNIQUE KEY ,
+	AccountID	TINYINT UNSIGNED UNIQUE KEY NOT NULL,
+	JoinDate	DATETIME DEFAULT NOW(),
+    PRIMARY KEY (GroupID,AccountID),
+    FOREIGN KEY(GroupID	) REFERENCES `Group`(GroupID),
+    FOREIGN KEY(AccountID) REFERENCES `Account`(AccountID)
+);
+-- create table:TypeQuestion
+CREATE TABLE	TypeQuestion(
+	TypeID	 	TINYINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+	TypeName 	VARCHAR(100) NOT NULL UNIQUE KEY
+);
+-- create table:CategoryQuestion
+CREATE TABLE	CategoryQuestion(
+	CategoryID		TINYINT	UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+	CategoryName	VARCHAR(50) UNIQUE KEY NOT NULL
+);
+-- create table:Question
+CREATE TABLE	`Question`(
+	QuestionID		TINYINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+	Content			NVARCHAR(50) UNIQUE KEY NOT NULL,
+	CategoryID		TINYINT UNSIGNED NOT NULL,
+	TypeID			TINYINT UNSIGNED NOT NULL, 
+	CreatorID		TINYINT	UNSIGNED NOT NULL,
+	CreateDate		DATETIME DEFAULT NOW(),
+    FOREIGN KEY(CategoryID) REFERENCES CategoryQuestion(CategoryID),
+    FOREIGN KEY(TypeID) REFERENCES TypeQuestion(TypeID),
+    FOREIGN KEY(CreatorID)REFERENCES `Account`(AccountID)
+);
+-- create table:Answer
+CREATE TABLE 	`Answer`(
+	AnswerID		TINYINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+	Content			NVARCHAR(50) NOT NULL,
+	QuestionID		TINYINT UNSIGNED NOT NULL,
+	isCorrect		ENUM('ĐÚNG','SAI') NOT NULL,
+    FOREIGN KEY(Content) REFERENCES`Question`(Content),
+    FOREIGN KEY(QuestionID)REFERENCES`Question`(QuestionID)
+);
+
+-- create table:Exam
+CREATE TABLE	Exam(
+	ExamID		TINYINT	UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+	`Code`		VARCHAR(50) UNIQUE KEY NOT NULL,
+	Title		VARCHAR(50) UNIQUE KEY NOT NULL,
+	CategoryID	TINYINT UNSIGNED NOT NULL,
+	Duration	TINYINT UNSIGNED NOT NULL,
+	CreatorID	TINYINT	UNSIGNED NOT NULL,
+	CreateDate	DATETIME DEFAULT NOW(),
+    FOREIGN KEY (CategoryID)REFERENCES CategoryQuestion(CategoryID),
+    FOREIGN KEY (CreatorID) REFERENCES `Account`(AccountID)
+);
+
+-- create table:ExamQuestion
+CREATE TABLE	`ExamQuestion`(
+	ExamID		TINYINT	UNSIGNED NOT NULL,
+	QuestionID	TINYINT	UNSIGNED NOT NULL,
+    FOREIGN KEY (ExamID) REFERENCES Exam(ExamID),
+    FOREIGN KEY (QuestionID) REFERENCES `Question`(QuestionID),
+    PRIMARY KEY (ExamID,QuestionID)
+);
+
