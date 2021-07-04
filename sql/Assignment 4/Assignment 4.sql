@@ -87,9 +87,10 @@ RIGHT JOIN employee_skill_table b
 ON a.Employee_Number=b.Employee_Number
 GROUP BY b.Employee_Number
 HAVING COUNT(b.Skill_Code)>1;
- 
- 
- 
+ -- hướng dẫn sử dụng  DISTINCT
+
+ SELECT DISTINCT Employee_Name
+ FROM employee_table;
  
  
  
