@@ -208,8 +208,8 @@ DROP PROCEDURE IF EXISTS question_2020;
 delimiter $$
 CREATE PROCEDURE question_2020( )
 BEGIN 
-DROP VIEW IF EXISTS Emonth;
-CREATE VIEW Emonth as
+
+ WITH Emonth AS(
 SELECT 1 AS thang
 UNION SELECT 2 AS thang
 UNION SELECT 3 AS thang
@@ -221,7 +221,8 @@ UNION SELECT 8 AS thang
 UNION SELECT 9 AS thang
 UNION SELECT 10 AS thang
 UNION SELECT 11 AS thang
-UNION SELECT 12 AS thang;
+UNION SELECT 12 AS thang) 
+
 SELECT count(QuestionID) AS Ques_month
 FROM Emonth a 
 LEFT JOIN (SELECT * FROM question WHERE YEAR(CreateDate) = YEAR(now()) -1 ) b 
@@ -232,10 +233,13 @@ delimiter ;
 
 call question_2020();
 
--- 
+-- CÂU 13: Viết store để in ra mỗi tháng có bao nhiêu câu hỏi được tạo trong 6 
+ -- tháng gần đây nhất
+--  (Nếu tháng nào không có thì sẽ in ra là "không có câu hỏi nào trong 
+-- tháng")
 
 
-
+ 
 
 
 
