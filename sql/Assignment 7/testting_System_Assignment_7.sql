@@ -51,7 +51,11 @@ FROM  `groupaccount`
  WHERE GroupID=NEW.GroupID
 GROUP BY GroupID;
 
-		IF DEM_USER >=5 THEN 
+SELECT COUNT(AccountID) 
+FROM groupaccount
+WHERE GroupID = 1;
+
+		IF DEM_USER = 5 THEN 
         SIGNAL SQLSTATE '12345'
         SET MESSAGE_TEXT='FULL NGƯỜI DÙNG';
         END IF;
