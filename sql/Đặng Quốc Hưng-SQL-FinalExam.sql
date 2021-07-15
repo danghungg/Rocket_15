@@ -12,7 +12,7 @@ Gender			ENUM('Male','Female','Unknow')
 
 -- tạo bảng Subject:
 CREATE TABLE `Subject`(
-SubjectID		INT  PRIMARY KEY,
+SubjectID		INT NOT NULL PRIMARY KEY,
 SubjectName		VARCHAR(50) NOT NULL
 );
 
@@ -20,7 +20,7 @@ SubjectName		VARCHAR(50) NOT NULL
 
 CREATE TABLE StudentSubject(
 StudentID		INT,
-SubjectID		INT,
+SubjectID		INT NOT NULL,
 Mark			TINYINT DEFAULT 0,
 `Date`			DATETIME DEFAULT NOW(),
 FOREIGN KEY (StudentID) REFERENCES Student(StudentID) ,
@@ -101,13 +101,18 @@ from StudentInfo;
  DROP TRIGGER IF EXISTS SubjectUpdateID;
  DELIMITER $$
  CREATE TRIGGER SubjectUpdateID
- AFTER UPDATE ON `subject`
-
+ BEFORE UPDATE ON `subject`
 FOR EACH ROW
  BEGIN
- UPDATE `subject` SET SubjectID = NEW.SubjectID;
-UPDATE studentsubject SET SubjectID=NEW.SubjectID;
-
+ INSERT INTO studentsubject
+ SET
+ StudentID = StudentID,
+ SubjectID = (SELECT SubjectID FROM `subject` WHERE SubjectID= NEW.SubjectID),
+ Mark     =Mark,
+ `Date`	  = `Date`;
+ -- UPDATE studentsubject SET SubjectID=NEW.SubjectID WHERE SubjectID =
+--  (SELECT SubjectID FROM `subject` WHERE SubjectID= OLD.SubjectID );
+ 
 END$$
 
  DELIMITER ;
