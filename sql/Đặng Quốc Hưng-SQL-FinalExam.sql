@@ -24,8 +24,7 @@ SubjectID		INT NOT NULL,
 Mark			TINYINT DEFAULT 0,
 `Date`			DATETIME DEFAULT NOW(),
 FOREIGN KEY (StudentID) REFERENCES Student(StudentID) ,
-FOREIGN KEY (SubjectID) REFERENCES `Subject`(SubjectID) ,
-PRIMARY KEY(StudentID,SubjectID)
+FOREIGN KEY (SubjectID) REFERENCES `Subject`(SubjectID) 
 
 );
 
@@ -98,28 +97,22 @@ from StudentInfo;
 -- cột SubjectID của table StudentSubject cũng bị xóa theo
 
 -- a)
- DROP TRIGGER IF EXISTS SubjectUpdateID;
- DELIMITER $$
- CREATE TRIGGER SubjectUpdateID
- BEFORE UPDATE ON `subject`
+DROP TRIGGER IF EXISTS SubjectUpdateID;
+DELIMITER $$
+CREATE TRIGGER SubjectUpdateID
+BEFORE UPDATE ON `subject`
 FOR EACH ROW
- BEGIN
- INSERT INTO studentsubject
- SET
- StudentID = StudentID,
- SubjectID = (SELECT SubjectID FROM `subject` WHERE SubjectID= NEW.SubjectID),
- Mark     =Mark,
- `Date`	  = `Date`;
- -- UPDATE studentsubject SET SubjectID=NEW.SubjectID WHERE SubjectID =
---  (SELECT SubjectID FROM `subject` WHERE SubjectID= OLD.SubjectID );
- 
+BEGIN
+	UPDATE studentsubject
+    SET SubjectID = NEW.SubjectID
+    WHERE SubjectID = OLD.SubjectID;
 END$$
 
  DELIMITER ;
 
 UPDATE `subject`
- SET  SubjectID =1007
- WHERE SubjectID= 1001;
+ SET  SubjectID =1
+ WHERE SubjectID =  1001;
 
 -- b)
 DROP TRIGGER IF EXISTS StudentDeleteID;
